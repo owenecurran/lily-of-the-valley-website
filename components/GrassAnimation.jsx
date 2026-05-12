@@ -28,6 +28,7 @@ export default function GrassAnimation() {
   const [startFading, setStartFading] = useState(false);
   const [visibleWords, setVisibleWords] = useState([false, false, false, false]);
   const [hintVisible,  setHintVisible]  = useState(true);
+  const [skyMode, setSkyMode] = useState(false);
 
   // ── Audio ──────────────────────────────────────────────────────────────────
   function startAudio() {
@@ -39,7 +40,12 @@ export default function GrassAnimation() {
         audioRef.current.loop = true;
         audioRef.current.volume = 0;
       }
-      audioRef.current.play().catch(() => {});
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          audioStarted.current = false;
+        });
+      }
       const fadeInInterval = setInterval(() => {
         if (audioRef.current) {
           if (audioRef.current.volume < 0.9) {
@@ -77,7 +83,9 @@ export default function GrassAnimation() {
     startAudio();
     setStartFading(true);
     setTimeout(() => setIsStarted(true), 900);
-    startAnimationRef.current?.();
+    requestAnimationFrame(() => {
+      startAnimationRef.current?.();
+    });
   }
 
   // ── Skip (click during animation) ─────────────────────────────────────────
@@ -94,6 +102,7 @@ export default function GrassAnimation() {
     const overlay = overlayRef.current;
     const ctx     = canvas.getContext('2d');
     let W, H;
+    const isMobile = window.innerWidth < 768;
 
     function resize() {
       const r = stage.getBoundingClientRect();
@@ -105,6 +114,7 @@ export default function GrassAnimation() {
       canvas.style.width = r.width + 'px';
       canvas.style.height = r.height + 'px';
 
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       W = r.width;
@@ -117,7 +127,8 @@ export default function GrassAnimation() {
       const x       = (Math.random() * 1.3 - 0.15) * W;
       const rootY   = H * (0.55 + depthT * 0.45);
       const diag    = Math.sqrt(W * W + H * H);
-      const targetH = diag * (0.38 + depthT * 0.3 + Math.random() * 0.25);
+      const mobileScale = isMobile ? 1.35 : 1;
+      const targetH = diag * (0.38 + depthT * 0.3 + Math.random() * 0.25) * mobileScale;
       const width   = (diag / 200 + depthT * diag / 100) + Math.random() * (diag / 180);
       const lean    = Math.random() - 0.5;
       const curveX  = lean * W * (0.45 + Math.random() * 0.45);
@@ -131,8 +142,7 @@ export default function GrassAnimation() {
 
     function initBlades() {
       const blades = [];
-      const isMobile = window.innerWidth < 768;
-      const bladeCount = isMobile ? 220 : 600;
+      const bladeCount = 650;
 
       for (let i = 0; i < bladeCount; i++) {
         blades.push(makeBlade(Math.pow(Math.random(), 0.7)));
@@ -223,7 +233,11 @@ export default function GrassAnimation() {
           });
         }, delay)
       );
+      setSkyMode(false);
 
+      setTimeout(() => {
+        setSkyMode(true);
+      }, 4600);
       // Fade out the hint after 500 ms
       hintTimer.current = setTimeout(() => setHintVisible(false), 500);
     }
@@ -260,8 +274,6 @@ export default function GrassAnimation() {
       {/* Start screen — fades out on first tap, satisfying browser autoplay policy */}
       {!isStarted && (
         <div
-          onClick={handleBegin}
-          onTouchStart={handleBegin}
           onPointerDown={handleBegin}
           style={{
             position: 'fixed',
@@ -303,10 +315,28 @@ export default function GrassAnimation() {
           userSelect: 'none',
         }}
       >
+
+        <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          opacity: skyMode ? 1 : 0,
+          transition: 'opacity 1.5s ease',
+          background:
+            'linear-gradient(to bottom, #87c8ff 0%, #87c8ff 55%, transparent 55%)',
+          zIndex: 0,
+        }}
+      />
         {/* Grass canvas */}
         <canvas
           ref={canvasRef}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%',}}
+          style={{ position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1,
+          }}
         />
 
         {/* Green fade overlay */}
@@ -319,6 +349,7 @@ export default function GrassAnimation() {
             opacity: 0,
             pointerEvents: 'none',
             transition: 'none',
+            zIndex: 2,
           }}
         />
 
@@ -333,6 +364,7 @@ export default function GrassAnimation() {
             justifyContent: 'center',
             pointerEvents: 'none',
             gap: '2.5rem',
+            zIndex: 3,
           }}
         >
           <div className="lily-words-row">
@@ -350,6 +382,7 @@ export default function GrassAnimation() {
                   transition: 'opacity 1.4s cubic-bezier(0.25,0.46,0.45,0.94), transform 1.4s cubic-bezier(0.25,0.46,0.45,0.94)',
                   opacity: visibleWords[i] ? 1 : 0,
                   transform: visibleWords[i] ? 'translateY(0)' : 'translateY(10px)',
+                  zIndex: 4,
                 }}
               >
                 {word}
