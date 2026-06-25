@@ -7,15 +7,17 @@ const WORDS = ['Lily', 'of', 'the', 'Valley'];
 const WORD_DELAYS_MS = [200, 1000, 3400, 4600];
 
 const CATEGORIES = [
-  { id: 'lyrics',    href: '/lyrics',    order: 1, desktop: { left: 63, top: 47, width: 30 } },
-  { id: 'socials',   href: '/socials',   order: 2, desktop: { left: 5,  top: 3,  width: 26 } },
-  { id: 'concerts',  href: '/concerts',  order: 3, desktop: { left: 4,  top: 60, width: 38 } },
-  { id: 'merch',     href: '/merch',     order: 4, desktop: { left: 53, top: 7,  width: 40 } },
-  { id: 'streaming', href: '/streaming', order: 5, desktop: { left: 16, top: 26, width: 32 } },
+  { id: 'lyrics',    href: '/lyrics',    order: 1,
+    desktop: { left: 63, top: 47, width: 30 }, mobile: { left: 53, top: 5,  width: 43 } },
+  { id: 'socials',   href: '/socials',   order: 2,
+    desktop: { left: 5,  top: 3,  width: 26 }, mobile: { left: 4,  top: 5,  width: 43 } },
+  { id: 'concerts',  href: '/concerts',  order: 3,
+    desktop: { left: 4,  top: 60, width: 38 }, mobile: { left: 4,  top: 63, width: 52 } },
+  { id: 'merch',     href: '/merch',     order: 4,
+    desktop: { left: 53, top: 7,  width: 40 }, mobile: { left: 53, top: 34, width: 43 } },
+  { id: 'streaming', href: '/streaming', order: 5,
+    desktop: { left: 16, top: 26, width: 32 }, mobile: { left: 4,  top: 34, width: 43 } },
 ];
-
-// Mobile: stacked in appearance order across 220vh
-const MOBILE_TOPS_VH = [4, 48, 92, 136, 178];
 
 export default function GrassAnimation() {
   const stageRef          = useRef(null);
@@ -304,7 +306,7 @@ export default function GrassAnimation() {
         onClick={handleSkip}
         style={{
           width: '100%',
-          height: isMobile ? '220vh' : '100vh',
+          height: '100vh',
           background: '#473E1E',
           position: 'relative',
           overflow: 'hidden',
@@ -376,7 +378,7 @@ export default function GrassAnimation() {
           const isVisible = windCards.has(cat.id);
 
           const posStyle = isMobile
-            ? { left: `${4 + offset.dx}vw`, top: `${MOBILE_TOPS_VH[cat.order - 1]}vh`, width: '88vw' }
+            ? { left: `${cat.mobile.left}vw`, top: `${cat.mobile.top}vh`, width: `${cat.mobile.width}vw` }
             : { left: `${cat.desktop.left + offset.dx}vw`, top: `${cat.desktop.top + offset.dy}vh`, width: `${cat.desktop.width}vw` };
 
           return (
@@ -394,7 +396,7 @@ export default function GrassAnimation() {
             >
               <video
                 autoPlay muted loop playsInline
-                style={{ width: '100%', aspectRatio: '16/9', display: 'block', objectFit: 'cover', transition: 'opacity 0.2s ease' }}
+                style={{ width: '100%', aspectRatio: '16/9', display: 'block', objectFit: 'cover', transition: 'opacity 0.2s ease', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
               >
                 <source src={`/${cat.id}.mp4`} type="video/mp4" />
               </video>
