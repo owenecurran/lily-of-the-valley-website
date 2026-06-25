@@ -8,15 +8,15 @@ const WORD_DELAYS_MS = [200, 1000, 3400, 4600];
 
 const CATEGORIES = [
   { id: 'lyrics',    href: '/lyrics',    order: 1,
-    desktop: { left: 63, top: 47, width: 30 }, mobile: { left: 53, top: 5,  width: 43 } },
+    desktop: { left: 63, top: 47, width: 30 }, mobile: { left: 48, top: 12, width: 44 } },
   { id: 'socials',   href: '/socials',   order: 2,
-    desktop: { left: 5,  top: 3,  width: 26 }, mobile: { left: 4,  top: 5,  width: 43 } },
+    desktop: { left: 5,  top: 3,  width: 26 }, mobile: { left: 3,  top: 3,  width: 44 } },
   { id: 'concerts',  href: '/concerts',  order: 3,
-    desktop: { left: 4,  top: 60, width: 38 }, mobile: { left: 4,  top: 63, width: 52 } },
+    desktop: { left: 4,  top: 60, width: 38 }, mobile: { left: 3,  top: 40, width: 56 } },
   { id: 'merch',     href: '/merch',     order: 4,
-    desktop: { left: 53, top: 7,  width: 40 }, mobile: { left: 53, top: 34, width: 43 } },
+    desktop: { left: 53, top: 7,  width: 40 }, mobile: { left: 48, top: 30, width: 44 } },
   { id: 'streaming', href: '/streaming', order: 5,
-    desktop: { left: 16, top: 26, width: 32 }, mobile: { left: 4,  top: 34, width: 43 } },
+    desktop: { left: 16, top: 26, width: 32 }, mobile: { left: 3,  top: 21, width: 44 } },
 ];
 
 export default function GrassAnimation() {
@@ -279,6 +279,10 @@ export default function GrassAnimation() {
         }
         .wind-card { display: block; cursor: pointer; }
         .wind-card:hover video { opacity: 0.8; }
+        .lily-word { font-size: clamp(2rem, 5.5vw, 5.5rem); }
+        @media (max-width: 560px) {
+          .lily-word { font-size: clamp(3rem, 16vw, 4rem); }
+        }
       `}</style>
 
       {/* Start screen */}
@@ -350,10 +354,9 @@ export default function GrassAnimation() {
         }}>
           <div className="lily-words-row">
             {WORDS.map((word, i) => (
-              <span key={word} style={{
+              <span key={word} className="lily-word" style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontWeight: 300,
-                fontSize: 'clamp(2.8rem, 20vw, 10.8rem)',
                 color: 'rgba(255, 255, 255, 0.96)',
                 letterSpacing: '0.17em', whiteSpace: 'nowrap',
                 textShadow: '0 1px 24px rgba(0,0,0,0.25)',
