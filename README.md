@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Project is available at [https://owen](https://www.owenvalentine.com/)
+Project is available at [owenvalentine.com](https://www.owenvalentine.com/)
 
 ## Music Landing Page
 
